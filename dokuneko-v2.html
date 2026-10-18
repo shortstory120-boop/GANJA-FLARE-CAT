@@ -123,6 +123,26 @@
   .btn-mini{background:linear-gradient(135deg,#6a3cff,#b84dff);color:#fff;grid-column:1/-1;font-size:14px;box-shadow:0 0 12px rgba(106,60,255,.3)}
   .btn-slot{background:linear-gradient(135deg,#ffd700,#ff6a00);color:#111;grid-column:1/-1;font-size:14px;font-weight:700;
     box-shadow:0 0 14px rgba(255,215,0,.35);border:none;border-radius:10px;padding:12px;cursor:pointer}
+  .btn-rank{background:linear-gradient(135deg,#ffe600,#ff9900);color:#111;grid-column:1/-1;font-size:14px;font-weight:700;
+    box-shadow:0 0 14px rgba(255,200,0,.3);border:none;border-radius:10px;padding:12px;cursor:pointer}
+  #rank-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:260;display:none;
+    align-items:center;justify-content:center;padding:16px}
+  #rank-overlay.show{display:flex}
+  .rank-box{background:linear-gradient(160deg,#12122a,#1a0a28);border:2px solid #ffe600;border-radius:16px;
+    padding:18px;width:100%;max-width:360px;max-height:85vh;overflow-y:auto}
+  .rank-box h2{color:#ffe600;text-align:center;font-size:17px;margin-bottom:12px;text-shadow:0 0 12px rgba(255,230,0,.4)}
+  .rank-list{list-style:none;padding:0;margin:0}
+  .rank-list li{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #333;font-size:12px}
+  .rank-list li a{color:#3dff2e;text-decoration:underline;font-weight:700}
+  .rank-list .r-pos{width:28px;font-weight:900;color:#ffe600;text-align:center}
+  .rank-list li:nth-child(1) .r-pos{color:#ffd700;font-size:16px}
+  .rank-list li:nth-child(2) .r-pos{color:#c0c0c0}
+  .rank-list li:nth-child(3) .r-pos{color:#cd7f32}
+  .rank-list .r-info{flex:1;color:#ddd}
+  .rank-list .r-score{color:#3dff2e;font-weight:700;white-space:nowrap}
+  .rank-box .close-rank{display:block;width:100%;margin-top:12px;background:var(--green);color:#000;
+    border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer}
+  .rank-note{font-size:10px;color:#888;margin-top:8px;line-height:1.4}
   .medal-row{font-size:12px!important;color:#ffd700!important}
   #slot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:250;display:none;
     flex-direction:column;align-items:center;justify-content:center;padding:16px}
@@ -342,6 +362,7 @@
       <button class="btn-buy" onclick="buyMini()" style="background:linear-gradient(135deg,#00ccff,#0088aa)">🎮 ミニゲーム回数 +3 (200 GANJA POINT)</button>
       <button class="btn-mini" id="btn-mini" onclick="startMini()">🐭 ミニゲーム（ネズミ退治）<br><span class="uses" id="mini-uses">残り 5回</span></button>
       <button class="btn-slot" onclick="openSlot()">🎰 スロット（メダル3枚/回）</button>
+      <button class="btn-rank" onclick="openRank()">🏆 ハイスコアランキング</button>
       <button class="btn-save" onclick="manualSave()">💾 セーブ</button>
       <button class="btn-load" onclick="manualLoad()">📂 ロード</button>
       <button class="btn-reset" onclick="confirmReset()">🗑 セーブリセット</button>
@@ -381,6 +402,7 @@
         <li>現在の <b>STAGE</b> でプレイ（トップに表示）</li>
         <li><b>通常ステージ</b>：制限時間なし。獲得ポイント <b>400</b> でクリア</li>
         <li>失敗条件：ビーム切れ または エナジー0</li>
+        <li>各ステージ開始時にヒットポイント（エナジー）は<strong>全快</strong></li>
         <li>クリアボーナス：ノーダメ <b>+100 GP</b>／残エナジー50〜90% <b>+50 GP</b></li>
         <li>ステージが上がるほど敵の数・出現頻度が増加</li>
         <li>クリア後「セーブして次のステージへ」「セーブしてやめる」を選択</li>
@@ -388,7 +410,8 @@
         <li>初期プレイ回数 <b>5回</b>（1時間に1回復）／200 GPで+3回</li>
         <li>初期ビーム <b>30発</b>（進化で+3）</li>
         <li>グレー3体→🌱ビーム+3／ピンク20秒・右→左・EXP150／葉っぱ25秒・左→右</li>
-        <li>葉っぱ1回→ビーム2本／2回→扇形15°3本＋猫デザイン変化</li>
+        <li>葉っぱ1回→ビーム2本／2回→縦三列ビーム＋猫デザイン変化</li>
+        <li>ステージごとにBGM変化。各種アクションに効果音あり</li>
         <li>操作：←→ / BEAM短押し・長押し大ビーム / ⏱タイムストップ</li>
       </ul>
 
@@ -427,6 +450,14 @@
         <li>🍒×3 → 100GP　／　BAR×3 → 50GP</li>
       </ul>
 
+      <h3>🏆 ハイスコアランキング</h3>
+      <ul>
+        <li>ステージクリア時に自動でスコア登録（上位10位）</li>
+        <li>スコア = 獲得EXP + ステージ×50 + ノーダメ+100 + ボス撃破+200</li>
+        <li>トップの「🏆 ハイスコアランキング」から1〜10位を確認</li>
+        <li>各順位の名前リンクをタップすると詳細（ステージ・日付）を表示</li>
+      </ul>
+
       <h3>💾 セーブ / ロード</h3>
       <ul>
         <li>進行状況はブラウザに<strong>自動保存</strong>されます</li>
@@ -458,6 +489,18 @@
         <button id="btn-spin" onclick="spinSlot()">SPIN</button>
         <button class="btn-slot-close" onclick="closeSlot()">閉じる</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ランキング -->
+  <div id="rank-overlay">
+    <div class="rank-box">
+      <h2>🏆 HIGH SCORE TOP 10</h2>
+      <ol class="rank-list" id="rank-list"></ol>
+      <p class="rank-note">スコア = 獲得EXP + ステージ×50 + ダメージボーナス<br>
+        各順位のリンクから詳細（ステージ・日付）を表示できます。<br>
+        ※この端末のブラウザ内ランキングです</p>
+      <button class="close-rank" onclick="closeRank()">閉じる</button>
     </div>
   </div>
 
@@ -524,6 +567,185 @@ const LEAF_IMG = new Image();
 LEAF_IMG.src = "data:image/png;base64,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";
 
 const SAVE_KEY = 'ganjaflare_dokuneko_save_v1';
+const RANK_KEY = 'ganjaflare_dokuneko_ranks_v1';
+
+function loadRanks() {
+  try {
+    const raw = localStorage.getItem(RANK_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function saveRanks(list) {
+  try {
+    localStorage.setItem(RANK_KEY, JSON.stringify(list.slice(0, 10)));
+  } catch (e) {}
+}
+
+function submitHighScore(entry) {
+  let list = loadRanks();
+  list.push(entry);
+  list.sort((a, b) => b.score - a.score);
+  list = list.slice(0, 10);
+  saveRanks(list);
+  return list.findIndex(r => r.id === entry.id) + 1; // 1-based rank or 0 if not in top10
+}
+
+function openRank() {
+  const list = loadRanks();
+  const el = document.getElementById('rank-list');
+  if (!el) return;
+  if (list.length === 0) {
+    el.innerHTML = '<li style="color:#888;justify-content:center">まだ記録がありません。ステージをクリアしよう！</li>';
+  } else {
+    el.innerHTML = list.map((r, i) => {
+      const pos = i + 1;
+      const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos + '位';
+      const detailId = 'rank-detail-' + pos;
+      return `<li>
+        <span class="r-pos">${medal}</span>
+        <span class="r-info">
+          <a href="#${detailId}" onclick="showRankDetail(${pos});return false;">${r.name || 'PLAYER'}</a>
+          <div id="${detailId}" style="display:none;font-size:10px;color:#999;margin-top:2px">
+            STAGE ${r.stage} ｜ EXP ${r.exp} ｜ ${r.date || '-'}
+            ${r.boss ? ' ｜ BOSS' : ''}
+            ${r.noDamage ? ' ｜ NO DAMAGE' : ''}
+          </div>
+        </span>
+        <span class="r-score">${r.score}</span>
+      </li>`;
+    }).join('');
+    // fill empty slots to 10
+    for (let i = list.length; i < 10; i++) {
+      el.innerHTML += `<li><span class="r-pos">${i+1}位</span><span class="r-info" style="color:#555">---</span><span class="r-score" style="color:#555">-</span></li>`;
+    }
+  }
+  document.getElementById('rank-overlay').classList.add('show');
+}
+
+function showRankDetail(pos) {
+  const id = 'rank-detail-' + pos;
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function closeRank() {
+  document.getElementById('rank-overlay').classList.remove('show');
+}
+
+// ========== オーディオ（BGM / SE） Web Audio API ==========
+const AudioFX = {
+  ctx: null,
+  bgmNodes: null,
+  bgmTimer: null,
+  muted: false,
+  ensure() {
+    if (!this.ctx) {
+      try {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) { return null; }
+    }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+  tone(freq, dur, type, vol, slide) {
+    const c = this.ensure();
+    if (!c || this.muted) return;
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = type || 'square';
+    o.frequency.setValueAtTime(freq, c.currentTime);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, slide), c.currentTime + dur);
+    g.gain.setValueAtTime(vol || 0.08, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + dur + 0.02);
+  },
+  noise(dur, vol) {
+    const c = this.ensure();
+    if (!c || this.muted) return;
+    const n = Math.floor(c.sampleRate * dur);
+    const buf = c.createBuffer(1, n, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = c.createBufferSource();
+    const g = c.createGain();
+    s.buffer = buf;
+    g.gain.value = vol || 0.06;
+    s.connect(g); g.connect(c.destination);
+    s.start();
+  }
+};
+
+const SFX = {
+  beam() { AudioFX.tone(880, 0.08, 'square', 0.06, 440); },
+  bigBeam() {
+    AudioFX.tone(220, 0.35, 'sawtooth', 0.1, 80);
+    AudioFX.tone(440, 0.25, 'square', 0.06, 120);
+    setTimeout(() => AudioFX.noise(0.2, 0.05), 50);
+  },
+  damage() { AudioFX.tone(180, 0.2, 'sawtooth', 0.1, 60); AudioFX.noise(0.15, 0.08); },
+  bossAppear() {
+    AudioFX.tone(110, 0.4, 'sawtooth', 0.12, 55);
+    setTimeout(() => AudioFX.tone(90, 0.5, 'square', 0.1, 40), 150);
+    setTimeout(() => AudioFX.tone(200, 0.3, 'triangle', 0.08), 300);
+  },
+  bossClear() {
+    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => AudioFX.tone(f, 0.25, 'square', 0.09), i * 120));
+  },
+  stageClear() {
+    [392, 523, 659, 784].forEach((f, i) => setTimeout(() => AudioFX.tone(f, 0.2, 'triangle', 0.08), i * 100));
+  },
+  feed() { AudioFX.tone(520, 0.1, 'triangle', 0.07); setTimeout(() => AudioFX.tone(680, 0.12, 'triangle', 0.06), 80); },
+  smoke() { AudioFX.tone(200, 0.25, 'sine', 0.05, 100); AudioFX.noise(0.2, 0.03); },
+  evolve() {
+    [330, 440, 554, 659, 880].forEach((f, i) => setTimeout(() => AudioFX.tone(f, 0.3, 'sawtooth', 0.07), i * 90));
+  },
+  slotSpin() { AudioFX.tone(300 + Math.random() * 200, 0.05, 'square', 0.04); },
+  slotWin() {
+    [523, 659, 784, 1046, 1318].forEach((f, i) => setTimeout(() => AudioFX.tone(f, 0.18, 'square', 0.08), i * 80));
+  },
+  slotLose() { AudioFX.tone(200, 0.3, 'triangle', 0.06, 80); },
+  leaf() { AudioFX.tone(660, 0.12, 'sine', 0.07); setTimeout(() => AudioFX.tone(880, 0.1, 'sine', 0.05), 60); }
+};
+
+const BGM = {
+  stop() {
+    if (this._timer) { clearInterval(this._timer); this._timer = null; }
+    if (this._gain) {
+      try { this._gain.gain.setValueAtTime(0, AudioFX.ctx.currentTime); } catch (e) {}
+    }
+    this._running = false;
+  },
+  start(stage, isBoss) {
+    this.stop();
+    const c = AudioFX.ensure();
+    if (!c || AudioFX.muted) return;
+    this._running = true;
+    // ステージごとにベース音程・テンポを変える
+    const base = isBoss ? 90 : (110 + ((stage - 1) % 8) * 12);
+    const interval = isBoss ? 280 : Math.max(220, 400 - stage * 8);
+    const scale = isBoss
+      ? [0, 3, 5, 6, 3, 0, -2, 3]
+      : [0, 2, 4, 5, 7, 5, 4, 2];
+    let step = 0;
+    this._timer = setInterval(() => {
+      if (!this._running) return;
+      const note = base * Math.pow(2, scale[step % scale.length] / 12);
+      AudioFX.tone(note, interval / 1000 * 0.8, isBoss ? 'sawtooth' : 'triangle', isBoss ? 0.035 : 0.025);
+      // 低音
+      if (step % 4 === 0) AudioFX.tone(base / 2, interval / 1000 * 1.2, 'sine', 0.03);
+      step++;
+    }, interval);
+  }
+};
+
+// ユーザー操作で AudioContext 解禁
+['touchstart', 'mousedown', 'keydown'].forEach(ev => {
+  document.addEventListener(ev, () => AudioFX.ensure(), { once: true, passive: true });
+});
 
 const defaultState = {
   energy: 100,
@@ -717,6 +939,7 @@ function doFeed() {
   state.mood = Math.min(100, state.mood + 3);
   document.getElementById('cat').classList.add('happy');
   setTimeout(() => document.getElementById('cat').classList.remove('happy'), 500);
+  SFX.feed();
   speak('うまー！');
   log('🍖 餌をあげた。エナジー +1');
   updateUI();
@@ -729,6 +952,7 @@ function doSmoke() {
   state.mood = Math.min(100, state.mood + 8);
   document.getElementById('cat').classList.add('smoke');
   setTimeout(() => document.getElementById('cat').classList.remove('smoke'), 800);
+  SFX.smoke();
   speak('ふーっ…');
   log('💨 スモークした。エナジー +0.5');
   updateUI();
@@ -768,6 +992,7 @@ function doEvolve() {
   state.timeStopLeft += 1;
   speak('進化した…！サイバーモード！');
   log('✨ 進化！ 回数 ' + state.evoCount + ' / ビーム+' + 3 + ' / タイムストップ+1');
+  SFX.evolve();
   playEvolveFX();
   applyCyberLook();
   updateUI();
@@ -978,6 +1203,7 @@ function spinSlot() {
   let ticks = 0;
   const anim = setInterval(() => {
     ticks++;
+    SFX.slotSpin();
     reels.forEach((el, i) => {
       if (ticks < 12 + i * 6) {
         el.textContent = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
@@ -1007,9 +1233,11 @@ function finishSlot(final) {
   }
   if (prize > 0) {
     state.coins += prize;
+    SFX.slotWin();
     speak('当たりだぜ！');
     log('🎰 ' + msg);
   } else {
+    SFX.slotLose();
     log('🎰 スロットはハズレ…');
   }
   document.getElementById('slot-result').textContent = msg;
@@ -1062,6 +1290,9 @@ async function startMini() {
     return;
   }
   state.miniLeft--;
+  // ステージ開始時にヒットポイント（エナジー）全快
+  state.energy = 100;
+  state.lastEnergyUpdate = Date.now();
   updateUI();
   document.getElementById('mini-overlay').classList.add('show');
   document.getElementById('result-modal').style.display = 'none';
@@ -1089,8 +1320,8 @@ async function startMini() {
     clearScore: 400, // 通常ステージのクリア条件（2倍）
     isBoss: boss,
     stageLevel: stageNum,
-    energy: state.energy,
-    startEnergy: state.energy, // ボーナス判定用
+    energy: 100,
+    startEnergy: 100, // ボーナス判定用（全快スタート）
     beams: state.beamsBase,
     seeds: 0,
     expGained: 0,
@@ -1137,12 +1368,14 @@ async function startMini() {
   await showStageIntro(boss, stageNum);
   if (!mini) return;
   mini.paused = false;
+  BGM.start(stageNum, boss);
   lastT = performance.now();
   animId = requestAnimationFrame(loop);
 }
 
 function spawnBoss() {
   if (!mini) return;
+  SFX.bossAppear();
   const hp = bossHpForStage(mini.stageLevel);
   mini.boss = {
     x: canvas.width / 2,
@@ -1500,6 +1733,7 @@ function loop(t) {
     for (const eb of mini.enemyBeams) {
       if (Math.abs(eb.x - mini.cat.x) < 22 && Math.abs(eb.y - mini.cat.y) < 28) {
         mini.energy -= eb.dmg;
+        SFX.damage();
         eb.y = 9999; // remove
         if (mini.energy <= 0) {
           mini.energy = 0;
@@ -1577,6 +1811,7 @@ function loop(t) {
       if (Math.abs(m.x - mini.cat.x) < 28 && Math.abs(m.y - mini.cat.y) < 30) {
         const dmg = m.type === 'gray' ? 5 : m.type === 'yellow' ? 10 : m.type === 'pink' ? 15 : 20;
         mini.energy -= dmg;
+        SFX.damage();
         m.hp = 0; // bounce off / remove
         if (mini.energy <= 0) {
           mini.energy = 0;
@@ -1953,11 +2188,10 @@ function fireNormalBeam() {
   };
   const lp = mini.leafPower || 0;
   if (lp >= 2) {
-    // 扇形3本（中央 + ±15度）
-    const rad = 15 * Math.PI / 180;
-    mini.beamsList.push({ ...base, vx: 0, vy: -speed });
-    mini.beamsList.push({ ...base, vx: Math.sin(rad) * speed, vy: -Math.cos(rad) * speed });
-    mini.beamsList.push({ ...base, vx: -Math.sin(rad) * speed, vy: -Math.cos(rad) * speed });
+    // 縦三列（中央・左・右）
+    mini.beamsList.push({ ...base, x: mini.cat.x, vx: 0, vy: -speed });
+    mini.beamsList.push({ ...base, x: mini.cat.x - 22, vx: 0, vy: -speed });
+    mini.beamsList.push({ ...base, x: mini.cat.x + 22, vx: 0, vy: -speed });
   } else if (lp >= 1) {
     // 2本並行
     mini.beamsList.push({ ...base, x: mini.cat.x - 10, vx: 0, vy: -speed });
@@ -1965,6 +2199,7 @@ function fireNormalBeam() {
   } else {
     mini.beamsList.push({ ...base, vx: 0, vy: -speed });
   }
+  SFX.beam();
 }
 
 function collectLeaf() {
@@ -1972,12 +2207,14 @@ function collectLeaf() {
   mini.leafPower = Math.min(2, (mini.leafPower || 0) + 1);
   mini.expGained += 10;
   mini.flash = Math.max(mini.flash || 0, 0.3);
+  SFX.leaf();
   updateMiniHUD();
 }
 
 function fireBigBeam() {
   if (!mini || mini.beams < CHARGE_COST) return;
   mini.beams -= CHARGE_COST;
+  SFX.bigBeam();
   // 画面中央付近の一列（横帯）を吹き飛ばす大ビーム
   mini.beamsList.push({
     x: mini.cat.x,
@@ -2004,6 +2241,7 @@ function endMini(timeup, bossClear, scoreClear, beamFail) {
   if (!mini || mini.over) return;
   mini.over = true;
   cancelAnimationFrame(animId);
+  BGM.stop();
   state.energy = Math.max(0, mini.energy);
   let gainedCoins = Math.floor(mini.expGained / 5);
   let bonusCoins = 0;
@@ -2028,14 +2266,37 @@ function endMini(timeup, bossClear, scoreClear, beamFail) {
   addExp(mini.expGained);
   state.coins += gainedCoins;
 
+  // ハイスコア登録（クリア時）
+  let rankPos = 0;
+  if (cleared) {
+    const noDmg = mini.startEnergy > 0 && (mini.energy / mini.startEnergy) >= 0.999;
+    const score = mini.expGained + mini.stageLevel * 50 + (noDmg ? 100 : 0) + (bossClear ? 200 : 0);
+    const now = new Date();
+    const dateStr = now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate() + ' ' +
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    const entry = {
+      id: 'r' + Date.now() + Math.random().toString(36).slice(2, 6),
+      name: 'PLAYER Lv.' + state.level,
+      score,
+      exp: mini.expGained,
+      stage: mini.stageLevel,
+      boss: !!bossClear,
+      noDamage: noDmg,
+      date: dateStr
+    };
+    rankPos = submitHighScore(entry);
+  }
+
   let title = 'ゲームオーバー…';
   let icon = '💀';
   if (bossClear) {
     title = 'BOSS CLEAR!!';
     icon = '👑';
+    SFX.bossClear();
   } else if (scoreClear) {
     title = 'STAGE CLEAR!!';
     icon = '🏆';
+    SFX.stageClear();
   } else if (beamFail || (mini.beams <= 0)) {
     title = 'ビーム切れ…失敗';
     icon = '🔫';
@@ -2055,6 +2316,9 @@ function endMini(timeup, bossClear, scoreClear, beamFail) {
   }
   if (bonusCoins > 0) {
     extra += `<div class="result-stat"><span class="label">ダメージボーナス</span><span class="value">+${bonusCoins} GP</span></div>`;
+  }
+  if (rankPos > 0 && rankPos <= 10) {
+    extra += `<div class="result-stat"><span class="label">ランキング</span><span class="value">${rankPos}位 入賞！</span></div>`;
   }
   document.getElementById('result-stats').innerHTML =
     `<div class="result-stat"><span class="label">獲得 EXP</span><span class="value">+${mini.expGained}</span></div>` +
@@ -2093,6 +2357,7 @@ function saveAndQuit() {
 }
 
 function closeMini() {
+  BGM.stop();
   document.getElementById('mini-overlay').classList.remove('show');
   const panel = document.getElementById('boss-panel');
   if (panel) panel.classList.remove('show');
