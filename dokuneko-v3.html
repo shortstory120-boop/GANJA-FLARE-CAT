@@ -339,9 +339,17 @@
   }
 
   .footer{font-size:10px;color:#555;padding:6px;text-align:center}
+  #audio-hint{
+    position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:400;
+    background:linear-gradient(135deg,#3dff2e,#00c853);color:#000;font-weight:800;font-size:13px;
+    padding:12px 20px;border-radius:24px;box-shadow:0 0 20px rgba(61,255,46,.5);
+    cursor:pointer;border:none;animation:audio-pulse 1.2s ease infinite alternate}
+  #audio-hint.hidden{display:none}
+  @keyframes audio-pulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 </style>
 </head>
 <body>
+  <button type="button" id="audio-hint" onclick="unlockAudioAndTitleBgm()">🔊 タップでBGMオン</button>
   <div class="header">
     <div class="logo-row">
       <div class="logo-circle">🍃</div>
@@ -673,44 +681,71 @@ function closeRank() {
 // ========== オーディオ（BGM / SE） Web Audio API ==========
 const AudioFX = {
   ctx: null,
-  bgmNodes: null,
-  bgmTimer: null,
   muted: false,
+  unlocked: false,
   ensure() {
     if (!this.ctx) {
       try {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       } catch (e) { return null; }
     }
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().then(() => { this.unlocked = true; }).catch(() => {});
+    } else {
+      this.unlocked = true;
+    }
     return this.ctx;
+  },
+  // 無音を1サンプル再生してコンテキストを解放（可能なら）
+  unlock() {
+    const c = this.ensure();
+    if (!c) return Promise.resolve(false);
+    const run = () => {
+      try {
+        const buf = c.createBuffer(1, 1, c.sampleRate);
+        const src = c.createBufferSource();
+        src.buffer = buf;
+        src.connect(c.destination);
+        src.start(0);
+        this.unlocked = true;
+        return true;
+      } catch (e) { return false; }
+    };
+    if (c.state === 'suspended') {
+      return c.resume().then(() => run()).catch(() => false);
+    }
+    return Promise.resolve(run());
   },
   tone(freq, dur, type, vol, slide) {
     const c = this.ensure();
     if (!c || this.muted) return;
-    const o = c.createOscillator();
-    const g = c.createGain();
-    o.type = type || 'square';
-    o.frequency.setValueAtTime(freq, c.currentTime);
-    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, slide), c.currentTime + dur);
-    g.gain.setValueAtTime(vol || 0.08, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
-    o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + dur + 0.02);
+    try {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = type || 'square';
+      o.frequency.setValueAtTime(freq, c.currentTime);
+      if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, slide), c.currentTime + dur);
+      g.gain.setValueAtTime(vol || 0.08, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+      o.connect(g); g.connect(c.destination);
+      o.start(); o.stop(c.currentTime + dur + 0.02);
+    } catch (e) {}
   },
   noise(dur, vol) {
     const c = this.ensure();
     if (!c || this.muted) return;
-    const n = Math.floor(c.sampleRate * dur);
-    const buf = c.createBuffer(1, n, c.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
-    const s = c.createBufferSource();
-    const g = c.createGain();
-    s.buffer = buf;
-    g.gain.value = vol || 0.06;
-    s.connect(g); g.connect(c.destination);
-    s.start();
+    try {
+      const n = Math.floor(c.sampleRate * dur);
+      const buf = c.createBuffer(1, n, c.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+      const s = c.createBufferSource();
+      const g = c.createGain();
+      s.buffer = buf;
+      g.gain.value = vol || 0.06;
+      s.connect(g); g.connect(c.destination);
+      s.start();
+    } catch (e) {}
   }
 };
 
@@ -813,13 +848,42 @@ const BGM = {
   }
 };
 
-// ユーザー操作で AudioContext 解禁 → トップBGM開始
+// オーディオ解禁 → トップBGM（iOSは最初の操作が必要な場合あり）
 function unlockAudioAndTitleBgm() {
-  AudioFX.ensure();
-  if (!mini) BGM.startTitle();
+  AudioFX.unlock().then(() => {
+    hideAudioHint();
+    if (!mini) BGM.startTitle();
+  });
 }
-['touchstart', 'mousedown', 'keydown'].forEach(ev => {
+function hideAudioHint() {
+  const h = document.getElementById('audio-hint');
+  if (h) h.classList.add('hidden');
+}
+function showAudioHint() {
+  const h = document.getElementById('audio-hint');
+  if (h) h.classList.remove('hidden');
+}
+['touchstart', 'touchend', 'mousedown', 'mouseup', 'keydown', 'click', 'pointerdown'].forEach(ev => {
   document.addEventListener(ev, unlockAudioAndTitleBgm, { passive: true });
+});
+// ページ表示時にも自動試行（PCなど許可されている環境向け）
+function tryAutoBgm() {
+  AudioFX.unlock().then(ok => {
+    if (ok || (AudioFX.ctx && AudioFX.ctx.state === 'running')) {
+      hideAudioHint();
+      if (!mini) BGM.startTitle();
+    } else {
+      showAudioHint();
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', tryAutoBgm);
+window.addEventListener('pageshow', tryAutoBgm);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (AudioFX.ctx && AudioFX.ctx.state === 'suspended') AudioFX.ctx.resume();
+    if (!mini && AudioFX.unlocked) BGM.startTitle();
+  }
 });
 
 const defaultState = {
@@ -2493,6 +2557,7 @@ energySystemTick();
 applyCyberLook();
 updateUI();
 saveGame();
+tryAutoBgm();
 if (loaded) {
   log('セーブデータを読み込みました。Lv.' + state.level + ' / STAGE ' + state.stage + ' / メダル9');
 } else {
