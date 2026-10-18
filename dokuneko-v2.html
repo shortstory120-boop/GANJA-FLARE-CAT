@@ -64,11 +64,40 @@
   .coin-row::before{content:'🍃';font-size:12px;opacity:.7}
   .cat-area{position:relative;width:100%;height:240px;display:flex;align-items:center;justify-content:center}
   .cat-img{width:190px;height:190px;object-fit:contain;border-radius:12px;cursor:pointer;
-    filter:drop-shadow(0 0 18px rgba(61,255,46,.45)) drop-shadow(0 0 30px rgba(184,77,255,.2));transition:transform .3s}
+    filter:drop-shadow(0 0 18px rgba(61,255,46,.45)) drop-shadow(0 0 30px rgba(184,77,255,.2));transition:filter .4s, transform .3s}
   .cat-img.happy{animation:bounce .5s ease}
   .cat-img.smoke{animation:pulse .9s ease}
+  /* 進化段階のサイバー調 */
+  .cat-img.cyber1{filter:drop-shadow(0 0 14px #00fff0) drop-shadow(0 0 28px #3dff2e) contrast(1.15) saturate(1.25)}
+  .cat-img.cyber2{filter:drop-shadow(0 0 16px #00e5ff) drop-shadow(0 0 32px #b84dff) contrast(1.2) saturate(1.35) hue-rotate(-8deg)}
+  .cat-img.cyber3{filter:drop-shadow(0 0 18px #ff2a8a) drop-shadow(0 0 36px #00fff0) drop-shadow(0 0 50px #3dff2e) contrast(1.3) saturate(1.45) brightness(1.08)}
+  .cat-img.cyber4{filter:drop-shadow(0 0 20px #ffe600) drop-shadow(0 0 40px #ff2a8a) drop-shadow(0 0 60px #00e5ff) contrast(1.4) saturate(1.55) brightness(1.12)}
+  .cat-area.cyber-ring::before{
+    content:'';position:absolute;width:220px;height:220px;border-radius:50%;
+    border:2px solid rgba(0,255,240,.35);box-shadow:0 0 24px rgba(0,255,240,.25), inset 0 0 24px rgba(61,255,46,.15);
+    animation:cyber-spin 8s linear infinite;pointer-events:none}
+  .cat-area.cyber-ring.strong::before{
+    border-color:rgba(255,42,138,.5);box-shadow:0 0 30px rgba(255,42,138,.35),0 0 50px rgba(0,229,255,.25), inset 0 0 28px rgba(61,255,46,.2)}
+  @keyframes cyber-spin{to{transform:rotate(360deg)}}
   @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px) scale(1.06)}}
   @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+  #stage-intro{
+    position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.75);z-index:80;pointer-events:none}
+  #stage-intro.show{display:flex}
+  #stage-intro .si-text{
+    font-size:36px;font-weight:900;letter-spacing:4px;color:#fff;
+    text-shadow:0 0 20px #3dff2e,0 0 40px #00fff0;animation:si-pop .4s ease}
+  #stage-intro.alert .si-text{
+    color:#ff2a6a;font-size:42px;letter-spacing:6px;
+    text-shadow:0 0 24px #ff2a6a,0 0 48px #ff0044;
+    animation:si-alert .4s ease infinite alternate}
+  @keyframes si-pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes si-alert{from{opacity:.55;transform:scale(1)}to{opacity:1;transform:scale(1.08)}}
+  .result-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%}
+  .result-actions button{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer}
+  .btn-next{background:linear-gradient(135deg,#3dff2e,#1a9a20);color:#000;box-shadow:0 0 14px rgba(61,255,46,.35)}
+  .btn-quit{background:linear-gradient(135deg,#444,#222);color:#fff;border:1px solid #666!important}
 
   .speech{position:absolute;top:0;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.9);
     border:2px solid var(--green);border-radius:10px;padding:6px 12px;font-size:12px;opacity:0;
@@ -92,6 +121,27 @@
   .btn-buy{background:linear-gradient(135deg,#ffd700,#e09000);color:#000;grid-column:1/-1;font-size:12px}
   .btn-evo{background:linear-gradient(135deg,#b84dff,#ff2a8a);color:#fff;grid-column:1/-1;box-shadow:0 0 14px rgba(184,77,255,.35)}
   .btn-mini{background:linear-gradient(135deg,#6a3cff,#b84dff);color:#fff;grid-column:1/-1;font-size:14px;box-shadow:0 0 12px rgba(106,60,255,.3)}
+  .btn-slot{background:linear-gradient(135deg,#ffd700,#ff6a00);color:#111;grid-column:1/-1;font-size:14px;font-weight:700;
+    box-shadow:0 0 14px rgba(255,215,0,.35);border:none;border-radius:10px;padding:12px;cursor:pointer}
+  .medal-row{font-size:12px!important;color:#ffd700!important}
+  #slot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:250;display:none;
+    flex-direction:column;align-items:center;justify-content:center;padding:16px}
+  #slot-overlay.show{display:flex}
+  .slot-box{background:linear-gradient(160deg,#1a0a28,#0d1a12);border:2px solid #ffd700;border-radius:16px;
+    padding:20px;width:100%;max-width:320px;text-align:center;box-shadow:0 0 30px rgba(255,215,0,.25)}
+  .slot-box h2{color:#ffd700;margin-bottom:12px;font-size:18px;text-shadow:0 0 12px rgba(255,215,0,.5)}
+  .slot-info{font-size:12px;color:#ccc;margin-bottom:10px}
+  .slot-reels{display:flex;gap:8px;justify-content:center;margin:16px 0}
+  .slot-reel{width:72px;height:80px;background:#111;border:2px solid #ffd700;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-size:36px;
+    box-shadow:inset 0 0 20px rgba(255,215,0,.15)}
+  .slot-reel.spinning{opacity:.7;filter:blur(1px)}
+  #slot-result{min-height:28px;color:#3dff2e;font-weight:700;font-size:13px;margin:8px 0}
+  .slot-btns{display:flex;gap:8px;margin-top:10px}
+  .slot-btns button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
+  #btn-spin{background:linear-gradient(135deg,#ffd700,#e09000);color:#000}
+  #btn-spin:disabled{opacity:.5}
+  .btn-slot-close{background:#333;color:#fff}
   .btn-save{background:linear-gradient(135deg,#2a8a4a,#1a5a30);color:#fff;font-size:12px}
   .btn-load{background:linear-gradient(135deg,#2a6aaa,#1a4060);color:#fff;font-size:12px}
   .btn-reset{background:linear-gradient(135deg,#8a2a2a,#5a1a1a);color:#fff;font-size:12px;grid-column:1/-1}
@@ -102,7 +152,57 @@
   #mini-overlay{position:fixed;inset:0;background:#0a0a12;z-index:200;display:none;flex-direction:column;align-items:center}
   #mini-overlay.show{display:flex}
   #mini-hud{width:100%;max-width:480px;padding:8px 12px;display:flex;justify-content:space-between;
-    align-items:center;font-size:13px;background:rgba(0,0,0,.8);border-bottom:1px solid #333}
+    align-items:center;font-size:13px;background:rgba(0,0,0,.8);border-bottom:1px solid #333;flex-wrap:wrap;gap:4px}
+  #clear-gauge{
+    position:absolute;top:8px;right:10px;z-index:70;width:120px;
+    background:rgba(0,0,0,.75);border:1px solid rgba(61,255,46,.4);border-radius:8px;
+    padding:6px 8px;pointer-events:none;display:none}
+  #clear-gauge.show{display:block}
+  #clear-gauge .cg-label{font-size:9px;color:#3dff2e;font-weight:700;letter-spacing:1px;margin-bottom:3px}
+  #clear-gauge .cg-bar-bg{height:8px;background:#1a1a2e;border-radius:4px;overflow:hidden;border:1px solid #333}
+  #clear-gauge .cg-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#3dff2e,#ffe600);
+    border-radius:4px;transition:width .2s;box-shadow:0 0 8px rgba(61,255,46,.5)}
+  #clear-gauge .cg-text{font-size:10px;color:#fff;text-align:right;margin-top:2px;font-weight:700}
+  #evo-fx{
+    position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.7);pointer-events:none}
+  #evo-fx.show{display:flex}
+  #evo-fx .evo-ring{
+    width:180px;height:180px;border-radius:50%;
+    border:3px solid #00fff0;box-shadow:0 0 40px #00fff0,0 0 80px #3dff2e,0 0 120px #b84dff;
+    animation:evo-pulse 1.2s ease-out forwards}
+  #evo-fx .evo-text{
+    position:absolute;font-size:28px;font-weight:900;color:#fff;letter-spacing:3px;
+    text-shadow:0 0 20px #00fff0,0 0 40px #ff2a8a;animation:evo-text-in 1.2s ease-out forwards}
+  @keyframes evo-pulse{
+    0%{transform:scale(.3);opacity:0;border-width:8px}
+    40%{transform:scale(1.2);opacity:1}
+    100%{transform:scale(2.5);opacity:0;border-width:1px}
+  }
+  @keyframes evo-text-in{
+    0%{transform:scale(.5);opacity:0}
+    30%{transform:scale(1.15);opacity:1}
+    80%{opacity:1}
+    100%{transform:scale(1);opacity:0}
+  }
+  #boss-panel{display:none;width:100%;max-width:480px;padding:8px 12px 10px;
+    background:linear-gradient(180deg,rgba(80,0,30,.95),rgba(20,0,10,.9));
+    border-bottom:2px solid #ff2a6a;box-shadow:0 4px 20px rgba(255,42,106,.25)}
+  #boss-panel.show{display:block}
+  #boss-panel .boss-title{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  #boss-panel .boss-title .tag{
+    font-weight:900;font-size:14px;letter-spacing:2px;color:#ff2a6a;
+    text-shadow:0 0 12px rgba(255,42,106,.8);animation:boss-blink 1s ease infinite alternate}
+  #boss-panel .boss-title .stage{font-size:12px;color:#ffccdd}
+  @keyframes boss-blink{from{opacity:.7;filter:brightness(1)}to{opacity:1;filter:brightness(1.3)}}
+  #boss-hp-wrap{display:flex;align-items:center;gap:8px}
+  #boss-hp-wrap .lbl{font-size:10px;color:#ff88aa;min-width:28px;font-weight:700}
+  #boss-hp-bg{flex:1;height:14px;background:#1a0510;border-radius:7px;overflow:hidden;
+    border:1px solid #ff2a6a;box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+  #boss-hp-fill{height:100%;width:100%;background:linear-gradient(90deg,#ff0044,#ff2a6a,#ff88aa);
+    border-radius:7px;transition:width .15s linear;box-shadow:0 0 10px rgba(255,42,106,.6)}
+  #boss-hp-text{font-size:11px;color:#fff;min-width:70px;text-align:right;font-weight:700}
   #charge-bar-wrap{width:100%;max-width:480px;padding:4px 12px 6px;background:rgba(0,0,0,.75);
     display:flex;align-items:center;gap:8px}
   #charge-label{font-size:10px;color:#3dff2e;font-weight:700;min-width:48px;letter-spacing:1px}
@@ -154,11 +254,14 @@
   }
   #mini-canvas{width:100%;max-width:480px;height:calc(100vh - 150px);background:#111;touch-action:none}
   #mini-controls{width:100%;max-width:480px;padding:8px;display:flex;gap:8px;justify-content:center;background:rgba(0,0,0,.7)}
-  .shoot-btn{line-height:1.2;font-size:12px!important}
   .ctrl-btn{width:56px;height:56px;border-radius:50%;background:#222;border:2px solid #555;color:#fff;font-size:22px;
-    display:flex;align-items:center;justify-content:center}
+    display:flex;align-items:center;justify-content:center;flex-direction:column}
   .ctrl-btn:active{background:#444}
-  .shoot-btn{background:linear-gradient(135deg,#39ff14,#00aa55);border-color:#39ff14;color:#000;font-weight:700}
+  .shoot-btn{
+    width:auto!important;min-width:88px;height:56px;border-radius:28px!important;
+    background:linear-gradient(135deg,#39ff14,#00aa55);border-color:#39ff14;color:#000;font-weight:700;
+    font-size:13px!important;line-height:1.15;padding:0 14px;white-space:nowrap}
+  .shoot-btn .sub{font-size:9px;font-weight:600;opacity:.85;margin-top:2px;letter-spacing:0}
   .time-btn{background:linear-gradient(135deg,#c000ff,#ff00aa);border-color:#c000ff}
 
   .result-modal{position:absolute;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:10}
@@ -216,6 +319,7 @@
 
   <div class="main">
     <div class="coin-row">🪙 <span id="coins">0</span> GANJA POINT</div>
+    <div class="coin-row medal-row">🎰 メダル <span id="medals">0</span> ｜ プレイ可 <span id="slot-plays">0</span>回</div>
 
     <div class="cat-area">
       <div class="speech" id="speech"></div>
@@ -227,6 +331,7 @@
     <div class="log" id="log">毒猫が目覚めた。餌をあげてエナジーを回復し、進化を目指そう。</div>
 
     <div class="actions">
+      <button class="btn-evo" id="btn-evo" onclick="doEvolve()" disabled>✨ 進化</button>
       <button class="btn-feed" id="btn-feed" onclick="doFeed()">
         🍖 餌やり<br><span class="uses" id="feed-uses">残り 10回</span>
       </button>
@@ -235,8 +340,8 @@
       </button>
       <button class="btn-buy" onclick="buyUses()">🛒 餌・スモーク回数 + (100 GANJA POINT)</button>
       <button class="btn-buy" onclick="buyMini()" style="background:linear-gradient(135deg,#00ccff,#0088aa)">🎮 ミニゲーム回数 +3 (200 GANJA POINT)</button>
-      <button class="btn-evo" id="btn-evo" onclick="doEvolve()" disabled>✨ 進化</button>
       <button class="btn-mini" id="btn-mini" onclick="startMini()">🐭 ミニゲーム（ネズミ退治）<br><span class="uses" id="mini-uses">残り 5回</span></button>
+      <button class="btn-slot" onclick="openSlot()">🎰 スロット（メダル3枚/回）</button>
       <button class="btn-save" onclick="manualSave()">💾 セーブ</button>
       <button class="btn-load" onclick="manualLoad()">📂 ロード</button>
       <button class="btn-reset" onclick="confirmReset()">🗑 セーブリセット</button>
@@ -261,37 +366,65 @@
       <ul>
         <li>経験値（EXP）が <b>100</b> 貯まるごとにレベルアップ</li>
         <li>EXPは主にミニゲームでネズミを倒して獲得</li>
-        <li>グレーネズミ = 5EXP　イエロー = 15EXP　ブルー = 30EXP</li>
+        <li>グレー=5 / イエロー=15 / ブルー=30 / ピンク=150 / ボス撃破=大量EXP</li>
       </ul>
 
       <h3>✨ 進化</h3>
       <ul>
-        <li>特定レベルに到達すると「進化」ボタンが押せる</li>
-        <li>進化可能レベル：5 / 10 / 20 / 30 / 50 / 80 / 100 / 200 / 500 / 1000 / 1500 以降は+500ごと</li>
-        <li>進化するごとに：ビーム初期数+3、必要発数+2、移動速度×1.25、ビーム威力×1.25、タイムストップ回数+1</li>
+        <li>特定レベルで「進化」ボタンが押せる</li>
+        <li>進化レベル：5 / 10 / 20 / 30 / 50 / 80 / 100 / 200 / 500 / 1000 / 1500 以降は+500ごと</li>
+        <li>進化ごとに：ビーム初期数+3、必要発数-1、移動速度×1.25、ビーム威力×1.25、タイムストップ+1</li>
       </ul>
 
-      <h3>🐭 ミニゲーム（ネズミ退治）</h3>
+      <h3>🐭 ミニゲーム / ステージ</h3>
       <ul>
-        <li>終了条件：<b>60秒経過</b> または <b>ビームが0発</b>になったとき</li>
-        <li>初期プレイ回数 <b>5回</b>（1時間ごとに1回回復）</li>
-        <li>追加は <b>200 GANJA POINT</b> で+3回</li>
+        <li>現在の <b>STAGE</b> でプレイ（トップに表示）</li>
+        <li><b>通常ステージ</b>：制限時間なし。獲得ポイント <b>400</b> でクリア</li>
+        <li>失敗条件：ビーム切れ または エナジー0</li>
+        <li>クリアボーナス：ノーダメ <b>+100 GP</b>／残エナジー50〜90% <b>+50 GP</b></li>
+        <li>ステージが上がるほど敵の数・出現頻度が増加</li>
+        <li>クリア後「セーブして次のステージへ」「セーブしてやめる」を選択</li>
+        <li>冒頭に「ステージ○」を2秒表示</li>
+        <li>初期プレイ回数 <b>5回</b>（1時間に1回復）／200 GPで+3回</li>
         <li>初期ビーム <b>30発</b>（進化で+3）</li>
-        <li>グレーを3体倒すと 🌱 が自動でゲットされビーム+3</li>
-        <li>ネズミにぶつかるとエナジー減少（灰5 / 黄10 / 青20 / ピンク15）</li>
-        <li><b>ピンクネズミ</b>：20秒に1匹、右→左へ一回だけ横断、倒すと <b>EXP 150</b></li>
-        <li><b>葉っぱ</b>：25秒に1回、左→右へ一回だけ横断。撃つか触ると取得</li>
-        <li>葉っぱ1回→ビーム2本　／　2回→扇形15°の3本ビーム</li>
-        <li>ネズミの赤いビームを食らうと大ダメージ（灰-10 / 黄-20 / 青-40）</li>
-        <li>操作：←→移動 / BEAM短押し＝通常射撃 / <b>長押しチャージ</b>で大ビーム（3発消費）</li>
-        <li>⏱でタイムストップ（5秒）</li>
-        <li>敵のビーム発射頻度が上がっています。回避に注意！</li>
+        <li>グレー3体→🌱ビーム+3／ピンク20秒・右→左・EXP150／葉っぱ25秒・左→右</li>
+        <li>葉っぱ1回→ビーム2本／2回→扇形15°3本＋猫デザイン変化</li>
+        <li>操作：←→ / BEAM短押し・長押し大ビーム / ⏱タイムストップ</li>
+      </ul>
+
+      <h3>👑 ボス戦（5ステージごと）</h3>
+      <ul>
+        <li>STAGE 5,10,15… でボス出現。冒頭「Alert！」点滅2秒</li>
+        <li>制限時間 <b>300秒</b></li>
+        <li>ボスHP：STAGE5=100 / 10=150 / 15=200 …（+50）</li>
+        <li>ビーム大量発射・大きめ。ピンク＆葉っぱも出現</li>
+        <li>撃破で大量EXP＆クリア</li>
+      </ul>
+
+      <h3>🤖 進化と見た目</h3>
+      <ul>
+        <li>進化するごとにトップの猫がサイバー調に変化</li>
+        <li>ネオンの発光・リング演出が強化されます</li>
       </ul>
 
       <h3>🪙 GANJA POINT</h3>
       <ul>
         <li>ミニゲームのEXPに応じて獲得</li>
         <li>餌・スモーク回数やミニゲーム回数の購入に使う</li>
+      </ul>
+
+      <h3>⏳ エナジー減衰</h3>
+      <ul>
+        <li>リアル時間で <b>24時間ごとに半分</b> まで減衰します</li>
+        <li>こまめに餌・スモークで維持しよう</li>
+      </ul>
+
+      <h3>🎰 スロットメダル & スロット</h3>
+      <ul>
+        <li>直近3日の平均エナジーが <b>70%以上</b> でメダル <b>1枚</b></li>
+        <li>メダル <b>3枚</b> でスロット1回</li>
+        <li>🐱×3 → 300GP　／　7️⃣×3 → 150GP</li>
+        <li>🍒×3 → 100GP　／　BAR×3 → 50GP</li>
       </ul>
 
       <h3>💾 セーブ / ロード</h3>
@@ -306,6 +439,31 @@
     </div>
   </div>
 
+  <!-- スロット -->
+  <div id="slot-overlay">
+    <div class="slot-box">
+      <h2>🎰 SLOT MACHINE</h2>
+      <div class="slot-info">メダル <b id="slot-medals-disp">0</b> ｜ プレイ可 <b id="slot-plays-disp">0</b>回</div>
+      <div class="slot-reels">
+        <div class="slot-reel" id="reel1">🐱</div>
+        <div class="slot-reel" id="reel2">7️⃣</div>
+        <div class="slot-reel" id="reel3">🍒</div>
+      </div>
+      <div id="slot-result">メダル3枚で1回スピン！</div>
+      <div style="font-size:10px;color:#888;text-align:left;margin:8px 0">
+        🐱×3 → 300GP　7️⃣×3 → 150GP<br>
+        🍒×3 → 100GP　BAR×3 → 50GP
+      </div>
+      <div class="slot-btns">
+        <button id="btn-spin" onclick="spinSlot()">SPIN</button>
+        <button class="btn-slot-close" onclick="closeSlot()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 進化エフェクト -->
+  <div id="evo-fx"><div class="evo-ring"></div><div class="evo-text">EVOLVE</div></div>
+
   <!-- Minigame -->
   <div id="mini-overlay">
     <div id="mini-hud">
@@ -313,17 +471,35 @@
       <span>⚡ <span id="m-energy">100</span></span>
       <span>🔫 <span id="m-beams">30</span></span>
       <span>🌱 <span id="m-seeds">0</span></span>
+      <span>🍃PWR <span id="m-pwr">-</span></span>
       <span>EXP <span id="m-exp">0</span></span>
+    </div>
+    <div id="clear-gauge">
+      <div class="cg-label">CLEAR</div>
+      <div class="cg-bar-bg"><div class="cg-bar-fill" id="cg-fill"></div></div>
+      <div class="cg-text" id="cg-text">0 / 400</div>
+    </div>
+    <div id="boss-panel">
+      <div class="boss-title">
+        <span class="tag">⚠ BOSS BATTLE</span>
+        <span class="stage" id="boss-stage-label">STAGE 5</span>
+      </div>
+      <div id="boss-hp-wrap">
+        <span class="lbl">HP</span>
+        <div id="boss-hp-bg"><div id="boss-hp-fill"></div></div>
+        <span id="boss-hp-text">100/100</span>
+      </div>
     </div>
     <div id="charge-bar-wrap">
       <div id="charge-label">CHARGE</div>
       <div id="charge-bar-bg"><div id="charge-bar-fill"></div></div>
     </div>
     <div id="charge-bubble"><div class="burst">CHARGED!!</div></div>
+    <div id="stage-intro"><div class="si-text" id="stage-intro-text">ステージ 1</div></div>
     <canvas id="mini-canvas"></canvas>
     <div id="mini-controls">
       <button class="ctrl-btn" id="btn-left">◀</button>
-      <button class="ctrl-btn shoot-btn" id="btn-shoot">BEAM<br><span style="font-size:9px">長押しで大ビーム</span></button>
+      <button class="ctrl-btn shoot-btn" id="btn-shoot">BEAM<span class="sub">長押し→大ビーム</span></button>
       <button class="ctrl-btn" id="btn-right">▶</button>
       <button class="ctrl-btn time-btn" id="btn-timestop" disabled>⏱</button>
     </div>
@@ -332,7 +508,9 @@
         <div class="result-icon" id="result-icon">🏆</div>
         <h3 id="result-title">結果</h3>
         <div class="result-stats" id="result-stats"></div>
-        <button onclick="closeMini()">🍃 メインに戻る</button>
+        <div class="result-actions" id="result-actions">
+          <button onclick="closeMini()">🍃 メインに戻る</button>
+        </div>
       </div>
     </div>
   </div>
@@ -351,6 +529,7 @@ const defaultState = {
   energy: 100,
   mood: 80,
   level: 1,
+  stage: 1,
   exp: 0,
   coins: 50,
   feedLeft: 10,
@@ -358,7 +537,11 @@ const defaultState = {
   miniLeft: 5,
   evoCount: 0,
   beamsBase: 30,
-  timeStopLeft: 0
+  timeStopLeft: 0,
+  slotMedals: 9,       // スロットメダル
+  lastEnergyUpdate: 0, // エナジー減衰用タイムスタンプ
+  energySamples: [],   // {day:'YYYY-MM-DD', pct:0-100}
+  lastMedalGrantDay: '' // 最後にメダルを付与した日
 };
 
 let state = { ...defaultState };
@@ -388,6 +571,7 @@ function loadGame() {
     state.energy = Math.max(0, Number(state.energy) || 0);
     state.mood = Math.max(0, Math.min(100, Number(state.mood) || 0));
     state.level = Math.max(1, Math.floor(Number(state.level) || 1));
+    state.stage = Math.max(1, Math.floor(Number(state.stage) || 1));
     state.exp = Math.max(0, Math.floor(Number(state.exp) || 0));
     state.coins = Math.max(0, Math.floor(Number(state.coins) || 0));
     state.feedLeft = Math.max(0, Math.floor(Number(state.feedLeft) || 0));
@@ -395,6 +579,10 @@ function loadGame() {
     state.miniLeft = Math.max(0, Math.floor(Number(state.miniLeft) || 0));
     state.evoCount = Math.max(0, Math.floor(Number(state.evoCount) || 0));
     state.beamsBase = Math.max(30, Math.floor(Number(state.beamsBase) || 30));
+    state.slotMedals = Math.max(0, Math.floor(Number(state.slotMedals) || 0));
+    state.lastEnergyUpdate = Number(state.lastEnergyUpdate) || 0;
+    state.energySamples = Array.isArray(state.energySamples) ? state.energySamples : [];
+    state.lastMedalGrantDay = state.lastMedalGrantDay || '';
     state.timeStopLeft = Math.max(0, Math.floor(Number(state.timeStopLeft) || 0));
     if (data.lastRecovery) {
       localStorage.setItem('dokuneko_lastRecovery', String(data.lastRecovery));
@@ -464,8 +652,13 @@ function updateUI() {
   document.getElementById('level-val').textContent = state.level;
   document.getElementById('exp-val').textContent = state.exp;
   document.getElementById('coins').textContent = state.coins;
+  const med = document.getElementById('medals');
+  if (med) med.textContent = state.slotMedals || 0;
+  const sp = document.getElementById('slot-plays');
+  if (sp) sp.textContent = Math.floor((state.slotMedals || 0) / 3);
   document.getElementById('lv-badge').textContent = 'Lv.' + state.level;
-  document.getElementById('evo-label').textContent = '進化' + state.evoCount + '回';
+  document.getElementById('evo-label').textContent = '進化' + state.evoCount + '回 ｜ STAGE ' + (state.stage || 1);
+  applyCyberLook();
   // オートセーブ（連続更新時はまとめて保存）
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(saveGame, 400);
@@ -573,10 +766,46 @@ function doEvolve() {
   state.evoCount++;
   state.beamsBase += 3;
   state.timeStopLeft += 1;
-  // 能力アップはミニゲーム側で参照
-  speak('進化した…！');
+  speak('進化した…！サイバーモード！');
   log('✨ 進化！ 回数 ' + state.evoCount + ' / ビーム+' + 3 + ' / タイムストップ+1');
+  playEvolveFX();
+  applyCyberLook();
   updateUI();
+}
+
+function playEvolveFX() {
+  const fx = document.getElementById('evo-fx');
+  if (!fx) return;
+  fx.classList.remove('show');
+  void fx.offsetWidth;
+  fx.classList.add('show');
+  // 猫も一瞬バウンド
+  const cat = document.getElementById('cat');
+  if (cat) {
+    cat.classList.add('happy');
+    setTimeout(() => cat.classList.remove('happy'), 600);
+  }
+  setTimeout(() => fx.classList.remove('show'), 1300);
+}
+
+function applyCyberLook() {
+  const cat = document.getElementById('cat');
+  const area = document.querySelector('.cat-area');
+  if (!cat) return;
+  cat.classList.remove('cyber1','cyber2','cyber3','cyber4');
+  if (area) {
+    area.classList.remove('cyber-ring','strong');
+  }
+  const e = state.evoCount || 0;
+  if (e <= 0) return;
+  if (e === 1) cat.classList.add('cyber1');
+  else if (e === 2) cat.classList.add('cyber2');
+  else if (e === 3) cat.classList.add('cyber3');
+  else cat.classList.add('cyber4');
+  if (area) {
+    area.classList.add('cyber-ring');
+    if (e >= 3) area.classList.add('strong');
+  }
 }
 
 function pet() {
@@ -622,6 +851,174 @@ function checkRecovery() {
 setInterval(checkRecovery, 30000); // 30秒ごとにチェック
 checkRecovery(); // 起動時にもチェック
 
+// ========== エナジー減衰（24時間で半分）＆スロットメダル ==========
+function dayKey(ts) {
+  const d = new Date(ts);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function applyEnergyDecay() {
+  const now = Date.now();
+  if (!state.lastEnergyUpdate) {
+    state.lastEnergyUpdate = now;
+    return;
+  }
+  const hours = (now - state.lastEnergyUpdate) / (1000 * 60 * 60);
+  if (hours <= 0) return;
+  // 24時間で半分 → energy *= 0.5^(hours/24)
+  const factor = Math.pow(0.5, hours / 24);
+  const before = state.energy;
+  state.energy = Math.max(0, state.energy * factor);
+  state.lastEnergyUpdate = now;
+  if (before - state.energy >= 1) {
+    log('⏳ 時間経過でエナジーが減衰… ' + Math.floor(before) + ' → ' + Math.floor(state.energy));
+  }
+}
+
+function recordEnergySample() {
+  const pct = Math.min(100, Math.max(0, state.energy)); // エナジーをそのまま％扱い（上限100想定）
+  const day = dayKey(Date.now());
+  if (!Array.isArray(state.energySamples)) state.energySamples = [];
+  const existing = state.energySamples.find(s => s.day === day);
+  if (existing) {
+    // その日の最大値を記録（良い状態を評価）
+    existing.pct = Math.max(existing.pct, pct);
+  } else {
+    state.energySamples.push({ day, pct });
+  }
+  // 直近3日分だけ残す
+  state.energySamples = state.energySamples.slice(-7);
+}
+
+function checkSlotMedal() {
+  if (!Array.isArray(state.energySamples) || state.energySamples.length < 3) return;
+  // 直近3日の平均
+  const last3 = state.energySamples.slice(-3);
+  const avg = last3.reduce((a, s) => a + s.pct, 0) / 3;
+  const today = dayKey(Date.now());
+  // 同じ日に二重付与しない
+  if (avg >= 70 && state.lastMedalGrantDay !== today) {
+    // 3日分が揃ったタイミングで1枚（日次チェック）
+    // 直近3日すべて記録がある場合のみ
+    state.slotMedals = (state.slotMedals || 0) + 1;
+    state.lastMedalGrantDay = today;
+    log('🎰 スロットメダル +1！（3日平均 ' + avg.toFixed(0) + '%） 所持: ' + state.slotMedals);
+    speak('メダルゲット！');
+    saveGame();
+  }
+}
+
+function energySystemTick() {
+  applyEnergyDecay();
+  recordEnergySample();
+  checkSlotMedal();
+  updateUI();
+  saveGame();
+}
+setInterval(energySystemTick, 60000);
+// 起動時は load 後に呼ぶ
+
+function slotPlaysAvailable() {
+  return Math.floor((state.slotMedals || 0) / 3);
+}
+
+// ========== スロットゲーム ==========
+const SLOT_SYMBOLS = ['🐱', '7️⃣', '🍒', 'BAR'];
+const SLOT_WEIGHTS = [12, 18, 25, 30]; // 低いほど出にくい（猫がレア）
+let slotSpinning = false;
+
+function weightedSymbol() {
+  const total = SLOT_WEIGHTS.reduce((a,b)=>a+b,0);
+  let r = Math.random() * total;
+  for (let i = 0; i < SLOT_SYMBOLS.length; i++) {
+    r -= SLOT_WEIGHTS[i];
+    if (r <= 0) return SLOT_SYMBOLS[i];
+  }
+  return SLOT_SYMBOLS[SLOT_SYMBOLS.length - 1];
+}
+
+function openSlot() {
+  if (slotPlaysAvailable() < 1) {
+    log('スロットメダルが足りない…（3枚で1回）');
+    speak('メダルが足りないぜ…');
+    return;
+  }
+  document.getElementById('slot-overlay').classList.add('show');
+  document.getElementById('slot-result').textContent = 'メダル3枚で1回スピン！';
+  document.getElementById('slot-medals-disp').textContent = state.slotMedals;
+  document.getElementById('slot-plays-disp').textContent = slotPlaysAvailable();
+}
+
+function closeSlot() {
+  if (slotSpinning) return;
+  document.getElementById('slot-overlay').classList.remove('show');
+}
+
+function spinSlot() {
+  if (slotSpinning) return;
+  if (slotPlaysAvailable() < 1) {
+    document.getElementById('slot-result').textContent = 'メダル不足（3枚必要）';
+    return;
+  }
+  slotSpinning = true;
+  state.slotMedals -= 3;
+  saveGame();
+  updateUI();
+  document.getElementById('slot-medals-disp').textContent = state.slotMedals;
+  document.getElementById('slot-plays-disp').textContent = slotPlaysAvailable();
+  document.getElementById('slot-result').textContent = 'スピン中…';
+  document.getElementById('btn-spin').disabled = true;
+
+  const reels = [
+    document.getElementById('reel1'),
+    document.getElementById('reel2'),
+    document.getElementById('reel3')
+  ];
+  const final = [weightedSymbol(), weightedSymbol(), weightedSymbol()];
+  let ticks = 0;
+  const anim = setInterval(() => {
+    ticks++;
+    reels.forEach((el, i) => {
+      if (ticks < 12 + i * 6) {
+        el.textContent = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+        el.classList.add('spinning');
+      } else {
+        el.textContent = final[i];
+        el.classList.remove('spinning');
+      }
+    });
+    if (ticks >= 12 + 2 * 6) {
+      clearInterval(anim);
+      finishSlot(final);
+    }
+  }, 80);
+}
+
+function finishSlot(final) {
+  slotSpinning = false;
+  document.getElementById('btn-spin').disabled = false;
+  let prize = 0;
+  let msg = 'ハズレ…';
+  if (final[0] === final[1] && final[1] === final[2]) {
+    if (final[0] === '🐱') { prize = 300; msg = '🐱🐱🐱 ジャックポット！ +300 GP'; }
+    else if (final[0] === '7️⃣') { prize = 150; msg = '7️⃣7️⃣7️⃣ ラッキーセブン！ +150 GP'; }
+    else if (final[0] === '🍒') { prize = 100; msg = '🍒🍒🍒 チェリー！ +100 GP'; }
+    else if (final[0] === 'BAR') { prize = 50; msg = 'BAR BAR BAR！ +50 GP'; }
+  }
+  if (prize > 0) {
+    state.coins += prize;
+    speak('当たりだぜ！');
+    log('🎰 ' + msg);
+  } else {
+    log('🎰 スロットはハズレ…');
+  }
+  document.getElementById('slot-result').textContent = msg;
+  document.getElementById('slot-medals-disp').textContent = state.slotMedals;
+  document.getElementById('slot-plays-disp').textContent = slotPlaysAvailable();
+  updateUI();
+  saveGame();
+}
+
 // ========== ミニゲーム ==========
 const canvas = document.getElementById('mini-canvas');
 const ctx = canvas.getContext('2d');
@@ -629,7 +1026,36 @@ let mini = null;
 let animId = null;
 let keys = {left:false, right:false};
 
-function startMini() {
+function isBossStage(stage) {
+  return stage >= 5 && stage % 5 === 0;
+}
+function bossHpForStage(stage) {
+  // ステージ5=100, 10=150, 15=200 ...
+  const n = Math.floor(stage / 5);
+  return 50 + 50 * n;
+}
+
+function showStageIntro(isBoss, stageNum) {
+  return new Promise(resolve => {
+    const el = document.getElementById('stage-intro');
+    const txt = document.getElementById('stage-intro-text');
+    if (!el || !txt) { resolve(); return; }
+    if (isBoss) {
+      el.classList.add('alert');
+      txt.textContent = 'Alert！';
+    } else {
+      el.classList.remove('alert');
+      txt.textContent = 'ステージ ' + stageNum;
+    }
+    el.classList.add('show');
+    setTimeout(() => {
+      el.classList.remove('show');
+      resolve();
+    }, 2000);
+  });
+}
+
+async function startMini() {
   if (state.miniLeft <= 0) {
     log('ミニゲームのプレイ回数が残っていない…');
     speak('回数が足りないぜ…');
@@ -640,26 +1066,31 @@ function startMini() {
   document.getElementById('mini-overlay').classList.add('show');
   document.getElementById('result-modal').style.display = 'none';
 
-  // resize
   const w = Math.min(window.innerWidth, 480);
-  const h = window.innerHeight - 120;
+  const h = window.innerHeight - 150;
   canvas.width = w;
   canvas.height = h;
 
   const evo = state.evoCount;
+  const stageNum = state.stage || 1;
+  const boss = isBossStage(stageNum);
+  // 進化ごとに必要発数 -1（最低1）
   const beamCost = {
-    gray: 1 + evo * 2,
-    yellow: 3 + evo * 2,
-    blue: 5 + evo * 2,
-    pink: 2 + evo * 2  // ピンクは比較的脆いが高得点
+    gray: Math.max(1, 1 - evo),
+    yellow: Math.max(1, 3 - evo),
+    blue: Math.max(1, 5 - evo),
+    pink: Math.max(1, 2 - evo),
+    boss: 1
   };
-  // 出現上限
-  const maxYellow = 3;
-  const maxBlue = 2;
 
   mini = {
-    time: 60,
+    time: boss ? 300 : 99999, // 通常は時間制限なし
+    noTimeLimit: !boss,
+    clearScore: 400, // 通常ステージのクリア条件（2倍）
+    isBoss: boss,
+    stageLevel: stageNum,
     energy: state.energy,
+    startEnergy: state.energy, // ボーナス判定用
     beams: state.beamsBase,
     seeds: 0,
     expGained: 0,
@@ -670,19 +1101,22 @@ function startMini() {
     mice: [],
     seedItems: [],
     beamCost,
-    maxYellow,
-    maxBlue,
+    // ステージ進行で敵上限・黄青枠が増える
+    maxYellow: Math.min(3 + Math.floor((stageNum - 1) / 3), 10),
+    maxBlue: Math.min(2 + Math.floor((stageNum - 1) / 4), 8),
     yellowSpawned: 0,
     blueSpawned: 0,
     timeStop: 0,
     timeStopLeft: state.timeStopLeft,
     lastSpawn: 0,
-    pinkTimer: 20,  // 20秒ごとにピンクネズミ
-    leafTimer: 25,  // 25秒ごとに葉っぱ
+    pinkTimer: 20,
+    leafTimer: 25,
     leaves: [],
-    leafPower: 0,   // 0=1本, 1=2本, 2+=扇形3本
+    leafPower: 0,
     over: false,
-    flash: 0
+    flash: 0,
+    boss: null,
+    paused: true // イントロ中は一時停止
   };
   chargeLevel = 0;
   isCharging = false;
@@ -691,18 +1125,96 @@ function startMini() {
 
   document.getElementById('btn-timestop').disabled = mini.timeStopLeft <= 0;
   updateMiniHUD();
-  spawnMice();
+
+  if (boss) {
+    spawnBoss();
+    log('⚠️ BOSS BATTLE! STAGE ' + stageNum + ' / 制限300秒');
+  } else {
+    spawnMice();
+    log('STAGE ' + stageNum + ' 開始！ 400ポイントでクリア');
+  }
+
+  await showStageIntro(boss, stageNum);
+  if (!mini) return;
+  mini.paused = false;
   lastT = performance.now();
   animId = requestAnimationFrame(loop);
 }
 
+function spawnBoss() {
+  if (!mini) return;
+  const hp = bossHpForStage(mini.stageLevel);
+  mini.boss = {
+    x: canvas.width / 2,
+    y: 70,
+    w: 56,
+    h: 44,
+    vx: 2.2,
+    hp,
+    maxHp: hp,
+    attackTimer: 1.2,
+    attackInterval: 1.4, // 頻繁に攻撃
+    color: '#ff2a6a'
+  };
+}
+
 function updateMiniHUD() {
   if (!mini) return;
-  document.getElementById('m-time').textContent = Math.ceil(mini.time);
+  const timeEl = document.getElementById('m-time');
+  if (mini.noTimeLimit) {
+    timeEl.textContent = '∞';
+    timeEl.style.color = '';
+    if (timeEl.parentElement) timeEl.parentElement.childNodes[0].textContent = '⏱ ';
+  } else {
+    timeEl.textContent = Math.ceil(mini.time);
+    timeEl.style.color = (mini.isBoss && mini.time < 60) || mini.time < 10 ? '#ff4466' : '';
+    if (timeEl.parentElement) timeEl.parentElement.childNodes[0].textContent = '⏱ ';
+  }
+  // クリアゲージ（右上）
+  const cg = document.getElementById('clear-gauge');
+  if (cg) {
+    if (mini.noTimeLimit) {
+      cg.classList.add('show');
+      const need = mini.clearScore || 400;
+      const pct = Math.min(100, (mini.expGained / need) * 100);
+      const fill = document.getElementById('cg-fill');
+      const txt = document.getElementById('cg-text');
+      if (fill) fill.style.width = pct + '%';
+      if (txt) txt.textContent = mini.expGained + ' / ' + need;
+    } else {
+      cg.classList.remove('show');
+    }
+  }
   document.getElementById('m-energy').textContent = Math.floor(mini.energy);
   document.getElementById('m-beams').textContent = mini.beams;
   document.getElementById('m-seeds').textContent = mini.seeds;
   document.getElementById('m-exp').textContent = mini.expGained;
+  const pwr = document.getElementById('m-pwr');
+  if (pwr) {
+    const lp = mini.leafPower || 0;
+    pwr.textContent = lp >= 2 ? 'MAX' : lp >= 1 ? 'x2' : '-';
+  }
+  // ボスUI
+  const panel = document.getElementById('boss-panel');
+  if (panel) {
+    if (mini.isBoss && mini.boss) {
+      panel.classList.add('show');
+      const pct = Math.max(0, mini.boss.hp / mini.boss.maxHp) * 100;
+      const fill = document.getElementById('boss-hp-fill');
+      if (fill) {
+        fill.style.width = pct + '%';
+        // 瀕死で色変化
+        if (pct < 30) fill.style.background = 'linear-gradient(90deg,#ff0000,#ff6600)';
+        else fill.style.background = 'linear-gradient(90deg,#ff0044,#ff2a6a,#ff88aa)';
+      }
+      const txt = document.getElementById('boss-hp-text');
+      if (txt) txt.textContent = Math.ceil(Math.max(0, mini.boss.hp)) + '/' + mini.boss.maxHp;
+      const st = document.getElementById('boss-stage-label');
+      if (st) st.textContent = 'STAGE ' + mini.stageLevel;
+    } else {
+      panel.classList.remove('show');
+    }
+  }
 }
 
 function spawnMice() {
@@ -739,11 +1251,34 @@ function spawnMice() {
     attackDmg = 40;
   }
 
+  // 強さに応じた移動パターン
+  // gray: 横スライド中心
+  // yellow: 斜めスライド
+  // blue: 縦＋斜めの機動的な動き
+  const baseSp = 2.5 + Math.random() * 1.2 + mini.cat.speed * 0.25;
+  let vx, vy, pattern, phase;
+  if (type === 'blue') {
+    pattern = Math.random() < 0.5 ? 'diag' : 'vertical';
+    vx = (Math.random() > 0.5 ? 1 : -1) * baseSp * 1.15;
+    vy = (Math.random() > 0.5 ? 1 : -1) * (baseSp * 0.7);
+    phase = Math.random() * Math.PI * 2;
+  } else if (type === 'yellow') {
+    pattern = 'diag';
+    vx = (Math.random() > 0.5 ? 1 : -1) * baseSp;
+    vy = (Math.random() > 0.5 ? 1 : -1) * (baseSp * 0.55);
+    phase = Math.random() * Math.PI * 2;
+  } else {
+    pattern = 'slide';
+    vx = (Math.random() > 0.5 ? 1 : -1) * baseSp;
+    vy = 0;
+    phase = Math.random() * Math.PI * 2;
+  }
+
   mini.mice.push({
     x: Math.random() * (canvas.width - 30) + 15,
-    y: 30 + Math.random() * 40,
+    y: 30 + Math.random() * Math.min(80, canvas.height * 0.25),
     w: 22, h: 18,
-    vx: (Math.random() > 0.5 ? 1 : -1) * (2.8 + Math.random()*1.5 + mini.cat.speed*0.3),
+    vx, vy, pattern, phase,
     type, hp, maxHp: hp, color: colors[type],
     canAttack, attackInterval, attackDmg,
     attackTimer: canAttack ? Math.random() * attackInterval : 0,
@@ -777,7 +1312,7 @@ function spawnLeaf() {
   mini.leaves.push({
     x: -30,
     y: 50 + Math.random() * Math.min(100, canvas.height * 0.3),
-    r: 18,
+    r: 24, // 当たりやすく大きめ
     life: 20,
     hp: 1,
     vx: 2.8 + Math.random() * 0.8, // 左から右へ
@@ -788,27 +1323,94 @@ function spawnLeaf() {
 let lastT = 0;
 function loop(t) {
   if (!mini || mini.over) return;
+  if (mini.paused) {
+    lastT = t;
+    animId = requestAnimationFrame(loop);
+    return;
+  }
   const dt = Math.min(0.05, (t - lastT) / 1000);
   lastT = t;
 
   if (mini.timeStop > 0) {
     mini.timeStop -= dt;
   } else {
-    mini.time -= dt;
+    if (!mini.noTimeLimit) mini.time -= dt;
     // move cat
     if (keys.left) mini.cat.x -= mini.cat.speed;
     if (keys.right) mini.cat.x += mini.cat.speed;
     mini.cat.x = Math.max(20, Math.min(canvas.width - 20, mini.cat.x));
 
+    // ===== BOSS =====
+    if (mini.boss && mini.boss.hp > 0) {
+      const b = mini.boss;
+      b.x += b.vx;
+      if (b.x < 40 || b.x > canvas.width - 40) b.vx *= -1;
+      b.y = 55 + Math.sin(t / 500) * 12;
+      b.attackTimer -= dt;
+      if (b.attackTimer <= 0) {
+        b.attackTimer = b.attackInterval;
+        // 多方向にビーム連射
+        const shots = 5;
+        for (let i = 0; i < shots; i++) {
+          const angle = (i / (shots - 1) - 0.5) * 1.2; // 扇状
+          mini.enemyBeams.push({
+            x: b.x,
+            y: b.y + 20,
+            speed: 3.2 + Math.random() * 1.2,
+            vx: Math.sin(angle) * 2.5,
+            dmg: 12,
+            color: '#ff2a6a'
+          });
+        }
+        // 真下にも1発
+        mini.enemyBeams.push({
+          x: b.x, y: b.y + 20, speed: 5, vx: 0, dmg: 18, color: '#ff0044'
+        });
+      }
+      // 接触ダメージ
+      if (Math.abs(b.x - mini.cat.x) < 40 && Math.abs(b.y - mini.cat.y) < 45) {
+        mini.energy -= 25 * dt; // 接触中は継続ダメージ
+        if (mini.energy <= 0) {
+          mini.energy = 0;
+          endMini(false);
+          return;
+        }
+      }
+    }
+
     // mice move + attack
     for (const m of mini.mice) {
-      m.x += m.vx;
       if (m.oneWay) {
-        // ピンク：右→左の一回のみ。画面外で消す
+        // ピンク：右→左の一回のみ
+        m.x += m.vx;
         if (m.x < -30) m.hp = 0;
       } else {
-        if (m.x < 10 || m.x > canvas.width - 10) m.vx *= -1;
-        m.y += Math.sin(t/400 + m.x) * 0.3;
+        const pat = m.pattern || 'slide';
+        if (pat === 'slide') {
+          // グレー：横スライド＋軽い上下揺れ
+          m.x += m.vx;
+          m.y += Math.sin(t / 350 + (m.phase || 0)) * 0.55;
+          if (m.x < 12 || m.x > canvas.width - 12) m.vx *= -1;
+        } else if (pat === 'diag') {
+          // イエロー／一部ブルー：斜めにスライドして壁で跳ね返る
+          m.x += m.vx;
+          m.y += m.vy || 0;
+          if (m.x < 12 || m.x > canvas.width - 12) m.vx *= -1;
+          const yMin = 20, yMax = canvas.height * 0.55;
+          if (m.y < yMin || m.y > yMax) m.vy *= -1;
+        } else if (pat === 'vertical') {
+          // ブルー：縦移動中心＋横にうねる
+          m.y += m.vy || 1.5;
+          m.x += Math.sin(t / 280 + (m.phase || 0)) * (Math.abs(m.vx) * 0.35);
+          const yMin = 20, yMax = canvas.height * 0.55;
+          if (m.y < yMin || m.y > yMax) m.vy *= -1;
+          if (m.x < 12 || m.x > canvas.width - 12) m.x = Math.max(12, Math.min(canvas.width - 12, m.x));
+        } else {
+          m.x += m.vx;
+          if (m.x < 12 || m.x > canvas.width - 12) m.vx *= -1;
+        }
+        // 画面内に収める
+        m.y = Math.max(16, Math.min(canvas.height * 0.6, m.y));
       }
 
       // 反撃タイマー
@@ -847,20 +1449,42 @@ function loop(t) {
 
     // leaves: 左→右移動・寿命・被弾・接触
     for (const leaf of mini.leaves) {
+      if (leaf.hp <= 0) continue;
+      const prevX = leaf.x;
       leaf.x += leaf.vx || 0;
       leaf.life -= dt;
       if (leaf.oneWay && leaf.x > canvas.width + 30) leaf.hp = 0; // 右端で消える
       // 接触で取得
-      if (Math.abs(leaf.x - mini.cat.x) < 28 && Math.abs(leaf.y - mini.cat.y) < 32) {
+      if (Math.abs(leaf.x - mini.cat.x) < 36 && Math.abs(leaf.y - mini.cat.y) < 40) {
         leaf.hp = 0;
         collectLeaf();
+        continue;
       }
-      // ビームで撃つ
+      // ビームで撃つ（当たり判定を大きめ＋移動線でも判定）
+      const hitR = (leaf.r || 18) + 20;
       for (const b of mini.beamsList) {
-        if (b.big) continue;
-        if (Math.abs(b.x - leaf.x) < leaf.r + 8 && Math.abs(b.y - leaf.y) < leaf.r + 8) {
+        if (leaf.hp <= 0) break;
+        let hit = false;
+        if (b.big) {
+          const halfW = (b.width || 120) / 2;
+          hit = Math.abs(leaf.x - b.x) < halfW && leaf.y < b.y + 50 && leaf.y > b.y - 100;
+        } else {
+          // 点と点
+          if (Math.abs(b.x - leaf.x) < hitR && Math.abs(b.y - leaf.y) < hitR) hit = true;
+          // ビームの移動方向に沿った短い線分判定（高速ビームのすり抜け防止）
+          const vx = b.vx != null ? b.vx : 0;
+          const vy = b.vy != null ? b.vy : -(b.speed || 7);
+          const steps = 3;
+          for (let s = 1; s <= steps && !hit; s++) {
+            const t = s / steps;
+            const bx = b.x - vx * t;
+            const by = b.y - vy * t;
+            if (Math.abs(bx - leaf.x) < hitR && Math.abs(by - leaf.y) < hitR) hit = true;
+          }
+        }
+        if (hit) {
           leaf.hp = 0;
-          b.y = -999;
+          if (!b.big) b.y = -999;
           collectLeaf();
         }
       }
@@ -870,6 +1494,7 @@ function loop(t) {
     // enemy beams
     for (const eb of mini.enemyBeams) {
       eb.y += eb.speed;
+      if (eb.vx) eb.x += eb.vx;
     }
     // hit cat?
     for (const eb of mini.enemyBeams) {
@@ -883,7 +1508,7 @@ function loop(t) {
         }
       }
     }
-    mini.enemyBeams = mini.enemyBeams.filter(eb => eb.y < canvas.height + 20);
+    mini.enemyBeams = mini.enemyBeams.filter(eb => eb.y < canvas.height + 20 && eb.x > -40 && eb.x < canvas.width + 40);
 
     // collision beam-mouse
     for (const b of mini.beamsList) {
@@ -917,6 +1542,32 @@ function loop(t) {
     }
     mini.mice = mini.mice.filter(m => m.hp > 0);
 
+    // collision beam-boss
+    if (mini.boss && mini.boss.hp > 0) {
+      const boss = mini.boss;
+      for (const b of mini.beamsList) {
+        let hit = false;
+        if (b.big) {
+          const halfW = (b.width || 120) / 2;
+          hit = Math.abs(boss.x - b.x) < halfW + boss.w / 2 && boss.y < b.y + 40 && boss.y > b.y - 100;
+        } else {
+          hit = Math.abs(b.x - boss.x) < boss.w / 2 + 12 && Math.abs(b.y - boss.y) < boss.h / 2 + 14;
+        }
+        if (hit) {
+          const dmg = b.big ? 25 : (b.power || 1);
+          boss.hp -= dmg;
+          if (!b.big) b.y = -100;
+          if (boss.hp <= 0) {
+            boss.hp = 0;
+            mini.expGained += 200 + mini.stageLevel * 10;
+            mini.flash = 0.6;
+            endMini(true, true); // ボス撃破クリア
+            return;
+          }
+        }
+      }
+    }
+
     // チャージ更新
     updateCharge(dt);
     if (mini.flash > 0) mini.flash -= dt;
@@ -946,19 +1597,28 @@ function loop(t) {
     }
     mini.seedItems = mini.seedItems.filter(s => s.life > 0);
 
-    // spawn
+    // spawn（ステージが上がるほど出現頻度・上限が増える）
     mini.lastSpawn += dt;
-    if (mini.lastSpawn > 1.4) {
+    const spawnInterval = Math.max(0.55, 1.4 - (mini.stageLevel - 1) * 0.06);
+    if (mini.lastSpawn > spawnInterval) {
       mini.lastSpawn = 0;
-      if (mini.mice.length < 12) spawnMice(); // 敵数1.5倍（上限8→12）
+      const stageBonus = Math.floor((mini.stageLevel - 1) / 2);
+      const maxMice = mini.isBoss
+        ? Math.min(6 + stageBonus, 14)
+        : Math.min(10 + stageBonus * 2, 30);
+      if (mini.mice.length < maxMice) spawnMice();
+      // 高ステージは追加スポーン
+      if (!mini.isBoss && mini.stageLevel >= 4 && mini.mice.length < maxMice && Math.random() < 0.35) {
+        spawnMice();
+      }
     }
-    // ピンクネズミ：20秒に1匹
+    // ピンクネズミ：20秒に1匹（ボス戦でも出現）
     mini.pinkTimer -= dt;
     if (mini.pinkTimer <= 0) {
       mini.pinkTimer = 20;
       spawnPinkMouse();
     }
-    // 葉っぱマーク：25秒に1回
+    // 葉っぱマーク：25秒に1回（ボス戦でも出現）
     mini.leafTimer -= dt;
     if (mini.leafTimer <= 0) {
       mini.leafTimer = 25;
@@ -970,12 +1630,19 @@ function loop(t) {
   drawMini();
   updateMiniHUD();
 
-  if (mini.time <= 0) {
-    endMini(true); // 時間切れ
+  // 通常ステージ：400ポイントでクリア
+  if (mini.noTimeLimit && mini.expGained >= (mini.clearScore || 400)) {
+    endMini(false, false, true); // score clear
     return;
   }
+  // ボス：時間切れ
+  if (!mini.noTimeLimit && mini.time <= 0) {
+    endMini(true);
+    return;
+  }
+  // 弾切れ → 失敗
   if (mini.beams <= 0 && mini.beamsList.length === 0) {
-    endMini(true); // ビーム切れ
+    endMini(false, false, false, true); // beam out fail
     return;
   }
   animId = requestAnimationFrame(loop);
@@ -991,6 +1658,49 @@ function drawMini() {
   ctx.lineWidth = 1;
   for (let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}
   for (let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+
+  // boss
+  if (mini.boss && mini.boss.hp > 0) {
+    const b = mini.boss;
+    const low = b.hp / b.maxHp < 0.3;
+    // outer glow
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, low ? 48 : 42, 0, Math.PI * 2);
+    ctx.fillStyle = low ? 'rgba(255,80,0,0.25)' : 'rgba(255,42,106,0.22)';
+    ctx.fill();
+    // body
+    ctx.fillStyle = low ? '#ff4400' : b.color;
+    ctx.shadowColor = low ? '#ff6600' : '#ff2a6a';
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.ellipse(b.x, b.y, b.w / 2, b.h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // ears
+    ctx.beginPath();
+    ctx.arc(b.x - 16, b.y - 18, 10, 0, Math.PI * 2);
+    ctx.arc(b.x + 16, b.y - 18, 10, 0, Math.PI * 2);
+    ctx.fill();
+    // eyes
+    ctx.fillStyle = low ? '#ff0000' : '#ffe600';
+    ctx.beginPath();
+    ctx.arc(b.x - 10, b.y - 4, 5, 0, Math.PI * 2);
+    ctx.arc(b.x + 10, b.y - 4, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(b.x - 10, b.y - 4, 2, 0, Math.PI * 2);
+    ctx.arc(b.x + 10, b.y - 4, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // crown
+    ctx.font = '20px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('👑', b.x, b.y - 32);
+    ctx.fillStyle = low ? '#ffaa00' : '#ff2a6a';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText(low ? 'ENRAGED' : 'BOSS', b.x, b.y - 48);
+    ctx.textAlign = 'left';
+  }
 
   // mice
   for (const m of mini.mice) {
@@ -1092,9 +1802,26 @@ function drawMini() {
     ctx.fillRect(0, 0, w, h);
   }
 
-  // cat (simple representation + eye beams origin)
+  // cat (パワーアップ段階で見た目変化)
   const c = mini.cat;
-  ctx.fillStyle = '#5a9aaa';
+  const lp = mini.leafPower || 0;
+  const bodyColors = ['#5a9aaa', '#4ecf7a', '#c9a0ff']; // 0 / 1 / 2+
+  const eyeColors = ['#ff66cc', '#ffe600', '#39ff14'];
+  const bodyCol = bodyColors[Math.min(lp, 2)];
+  const eyeCol = eyeColors[Math.min(lp, 2)];
+
+  // オーラ
+  if (lp >= 1) {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y - 8, 28 + lp * 4, 0, Math.PI * 2);
+    ctx.fillStyle = lp >= 2 ? 'rgba(184,77,255,0.2)' : 'rgba(61,255,46,0.18)';
+    ctx.fill();
+    ctx.strokeStyle = lp >= 2 ? 'rgba(184,77,255,0.5)' : 'rgba(61,255,46,0.45)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = bodyCol;
   ctx.beginPath();
   ctx.ellipse(c.x, c.y, 18, 16, 0, 0, Math.PI*2);
   ctx.fill();
@@ -1105,17 +1832,32 @@ function drawMini() {
   // eyes (spiral vibe)
   ctx.fillStyle = '#111';
   ctx.fillRect(c.x-12, c.y-18, 24, 8);
-  ctx.fillStyle = '#ff66cc';
+  ctx.fillStyle = eyeCol;
   ctx.beginPath();
   ctx.arc(c.x-5, c.y-14, 3, 0, Math.PI*2);
   ctx.arc(c.x+5, c.y-14, 3, 0, Math.PI*2);
   ctx.fill();
   // ears
-  ctx.fillStyle = '#5a9aaa';
+  ctx.fillStyle = bodyCol;
   ctx.beginPath();
   ctx.moveTo(c.x-12, c.y-24); ctx.lineTo(c.x-6, c.y-34); ctx.lineTo(c.x-2, c.y-24);
   ctx.moveTo(c.x+12, c.y-24); ctx.lineTo(c.x+6, c.y-34); ctx.lineTo(c.x+2, c.y-24);
   ctx.fill();
+
+  // パワーアップ表示
+  if (lp >= 1) {
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = eyeCol;
+    ctx.textAlign = 'center';
+    ctx.fillText(lp >= 2 ? 'PWR MAX' : 'PWR UP', c.x, c.y + 28);
+    ctx.textAlign = 'left';
+  }
+  // 葉バッジ
+  if (lp >= 1) {
+    ctx.font = '14px serif';
+    ctx.fillText('🍃', c.x + 14, c.y - 22);
+    if (lp >= 2) ctx.fillText('🍃', c.x - 28, c.y - 22);
+  }
 
   // time stop overlay
   if (mini.timeStop > 0) {
@@ -1228,13 +1970,9 @@ function fireNormalBeam() {
 function collectLeaf() {
   if (!mini) return;
   mini.leafPower = Math.min(2, (mini.leafPower || 0) + 1);
-  // 少しボーナス
   mini.expGained += 10;
-  if (mini.leafPower === 1) {
-    // ビーム2本化
-  } else if (mini.leafPower >= 2) {
-    // 扇形3本
-  }
+  mini.flash = Math.max(mini.flash || 0, 0.3);
+  updateMiniHUD();
 }
 
 function fireBigBeam() {
@@ -1247,7 +1985,7 @@ function fireBigBeam() {
     speed: 14,
     power: 999,
     big: true,
-    width: canvas.width / 2, // 横幅を画面の1/2に
+    width: canvas.width / 4, // 横幅を画面の1/4（以前の半分）
     life: 0.45
   });
   // 視覚エフェクト用フラッシュ
@@ -1261,42 +1999,107 @@ function useTimeStop() {
   document.getElementById('btn-timestop').disabled = mini.timeStopLeft <= 0;
 }
 
-function endMini(timeup) {
+// endMini(timeup, bossClear, scoreClear, beamFail)
+function endMini(timeup, bossClear, scoreClear, beamFail) {
+  if (!mini || mini.over) return;
   mini.over = true;
   cancelAnimationFrame(animId);
-  // reflect energy & exp
   state.energy = Math.max(0, mini.energy);
-  const gainedCoins = Math.floor(mini.expGained / 5);
+  let gainedCoins = Math.floor(mini.expGained / 5);
+  let bonusCoins = 0;
+  const cleared = !!(bossClear || scoreClear);
+
+  // クリア時ダメージボーナス
+  if (cleared && mini.startEnergy > 0) {
+    const ratio = mini.energy / mini.startEnergy;
+    if (ratio >= 0.999) {
+      bonusCoins = 100; // ノーダメージ
+    } else if (ratio >= 0.5 && ratio < 0.9) {
+      bonusCoins = 50; // 50%以上90%未満
+    } else if (ratio >= 0.9) {
+      bonusCoins = 50; // 90%以上も50（ノーダメ以外）
+    }
+    // ユーザー指定: ノーダメ+100 / 50%〜90%は+50
+    // 90%以上〜100%未満も50に含める
+    if (ratio >= 0.5 && ratio < 1) bonusCoins = 50;
+    if (ratio >= 0.999) bonusCoins = 100;
+  }
+  gainedCoins += bonusCoins;
   addExp(mini.expGained);
   state.coins += gainedCoins;
 
   let title = 'ゲームオーバー…';
   let icon = '💀';
-  if (timeup) {
-    if (mini.beams <= 0) {
-      title = 'ビーム切れ！';
-      icon = '🔫';
-    } else {
-      title = '時間切れ！';
-      icon = '⏱';
-    }
+  if (bossClear) {
+    title = 'BOSS CLEAR!!';
+    icon = '👑';
+  } else if (scoreClear) {
+    title = 'STAGE CLEAR!!';
+    icon = '🏆';
+  } else if (beamFail || (mini.beams <= 0)) {
+    title = 'ビーム切れ…失敗';
+    icon = '🔫';
+  } else if (mini.energy <= 0) {
+    title = 'エナジー切れ…失敗';
+    icon = '💀';
+  } else if (timeup) {
+    title = mini.isBoss ? 'ボス討伐失敗…' : '時間切れ！';
+    icon = '⏱';
   }
-  if (mini.expGained >= 50) { icon = '🏆'; }
-  else if (mini.expGained >= 20) { icon = '⭐'; }
 
   document.getElementById('result-icon').textContent = icon;
   document.getElementById('result-title').textContent = title;
+  let extra = `<div class="result-stat"><span class="label">ステージ</span><span class="value">${mini.stageLevel}</span></div>`;
+  if (mini.isBoss) {
+    extra += `<div class="result-stat"><span class="label">ボス</span><span class="value">${bossClear ? '撃破!' : '生存'}</span></div>`;
+  }
+  if (bonusCoins > 0) {
+    extra += `<div class="result-stat"><span class="label">ダメージボーナス</span><span class="value">+${bonusCoins} GP</span></div>`;
+  }
   document.getElementById('result-stats').innerHTML =
     `<div class="result-stat"><span class="label">獲得 EXP</span><span class="value">+${mini.expGained}</span></div>` +
     `<div class="result-stat"><span class="label">獲得 GANJA POINT</span><span class="value">+${gainedCoins}</span></div>` +
     `<div class="result-stat"><span class="label">残りエナジー</span><span class="value">${Math.floor(mini.energy)}</span></div>` +
-    `<div class="result-stat"><span class="label">現在レベル</span><span class="value">Lv.${state.level}</span></div>`;
+    `<div class="result-stat"><span class="label">現在レベル</span><span class="value">Lv.${state.level}</span></div>` +
+    extra;
+
+  const actions = document.getElementById('result-actions');
+  if (cleared) {
+    actions.innerHTML =
+      `<button class="btn-next" onclick="saveAndNextStage()">💾 セーブして次のステージへ</button>` +
+      `<button class="btn-quit" onclick="saveAndQuit()">💾 セーブしてやめる</button>`;
+  } else {
+    actions.innerHTML = `<button onclick="closeMini()">🍃 メインに戻る</button>`;
+  }
   document.getElementById('result-modal').style.display = 'flex';
   updateUI();
 }
 
+function saveAndNextStage() {
+  state.stage = (state.stage || 1) + 1;
+  saveGame();
+  log('STAGE ' + state.stage + ' へ進む！');
+  closeMini();
+  // 次ステージをすぐ開始（回数消費あり）
+  setTimeout(() => startMini(), 200);
+}
+
+function saveAndQuit() {
+  state.stage = (state.stage || 1) + 1;
+  saveGame();
+  log('セーブ完了。次は STAGE ' + state.stage);
+  speak('覚えたぜ！');
+  closeMini();
+}
+
 function closeMini() {
   document.getElementById('mini-overlay').classList.remove('show');
+  const panel = document.getElementById('boss-panel');
+  if (panel) panel.classList.remove('show');
+  const intro = document.getElementById('stage-intro');
+  if (intro) intro.classList.remove('show');
+  const cg = document.getElementById('clear-gauge');
+  if (cg) cg.classList.remove('show');
   mini = null;
 }
 
@@ -1336,12 +2139,16 @@ document.getElementById('cat').src = CAT_SRC;
 
 // オートセーブから復元
 const loaded = loadGame();
+state.slotMedals = 9; // 初期メダル9枚
+if (!state.lastEnergyUpdate) state.lastEnergyUpdate = Date.now();
+energySystemTick();
+applyCyberLook();
 updateUI();
+saveGame();
 if (loaded) {
-  log('セーブデータを読み込みました。Lv.' + state.level + ' / ' + state.coins + ' GP');
+  log('セーブデータを読み込みました。Lv.' + state.level + ' / STAGE ' + state.stage + ' / メダル9');
 } else {
-  log('ゲーム開始！ ミニゲームでネズミを倒して経験値を稼ごう。');
-  saveGame();
+  log('ゲーム開始！ スロットメダル9枚付与！');
 }
 
 // 定期オートセーブ（念のため）
